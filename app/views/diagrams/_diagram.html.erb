@@ -1,0 +1,47 @@
+<div id="<%= dom_id diagram %>">
+  <p class="my-5">
+    <strong class="block font-medium mb-1">Task name:</strong>
+    <%= diagram.task_name %>
+  </p>
+
+  <p class="my-5">
+    <strong class="block font-medium mb-1">Description:</strong>
+    <%= diagram.description %>
+  </p>
+
+  <p class="my-5">
+    <strong class="block font-medium mb-1">Start date:</strong>
+    <%= diagram.start_date %>
+  </p>
+
+  <p class="my-5">
+    <strong class="block font-medium mb-1">End date:</strong>
+    <%= diagram.end_date %>
+  </p>
+
+  <p class="my-5">
+    <strong class="block font-medium mb-1">Progress:</strong>
+    <%= diagram.progress %>
+  </p>
+
+  <p class="my-5">
+    <strong class="block font-medium mb-1">Duration:</strong>
+    <%= diagram.duration %>
+  </p>
+
+  <p class="my-5">
+    <strong class="block font-medium mb-1">Priority:</strong>
+    <%= diagram.priority %>
+  </p>
+
+  <p class="my-5">
+    <strong class="block font-medium mb-1">Parent:</strong>
+    <%= diagram.parent %>
+  </p>
+
+  <% if action_name != "show" %>
+    <%= link_to "Show this diagram", diagram, class: "rounded-lg py-3 px-5 bg-gray-100 inline-block font-medium" %>
+    <%= link_to 'Edit this diagram', edit_diagram_path(diagram), class: "rounded-lg py-3 ml-2 px-5 bg-gray-100 inline-block font-medium" %>
+    <hr class="mt-6">
+  <% end %>
+</div>
