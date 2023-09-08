@@ -5,8 +5,9 @@
     <% end %>
 
     <%= render @project %>
-
-    <div data-controller="gantt" style='width:100vw; height:100vh;'></div>
+    <div data-controller="gantt" data-gantt-data="<%= @project.id %>">
+    <div id="gantt_container" style='width:100vw; height:100vh;'></div>
+    </div>
 
     <%= link_to 'Edit this project', edit_project_path(@project), class: "mt-2 rounded-lg py-3 px-5 bg-gray-100 inline-block font-medium" %>
     <div class="inline-block ml-2">
