@@ -4,16 +4,18 @@ import { Controller } from "@hotwired/stimulus"
 export default class extends Controller {
   connect() {
     const ganttData = this.element.getAttribute("data-gantt-data");
-    console.log(ganttData);
-    
-    console.log("holaaaaaaaa");
 
-    
+    // Displays the object 
+    // console.log(ganttData);
+
+    // Set gantt configuration and editors
     const textEditor = { type: "text", map_to: "text" };
+
     const startDateEditor = {
         type: "date", map_to: "start_date", min: new Date(2000, 0, 1),
         max: new Date(2024, 0, 1)
     };
+
     const endDateEditor = {
         type: "date", map_to: "end_date", min: new Date(2000, 0, 1),
         max: new Date(2024, 0, 1)
@@ -33,19 +35,15 @@ export default class extends Controller {
     ];
     
     gantt.config.autofit = true;
-    gantt.config.grid_width = 600;
+    gantt.config.grid_width = 500;
 
     gantt.plugins({ 
       tooltip: true 
     });
 
-
-
     gantt.init("gantt_container");
-
-    // 
     
-    // Make an Ajax request using the Fetch API
+    // Make an Ajax request to the controller action
     fetch(`/projects/${ganttData}.json`)
       .then((response) => {
         if (!response.ok) {
@@ -54,12 +52,9 @@ export default class extends Controller {
         return response.json();
       })
       .then((data) => {
-        console.log(data);
-        gantt.parse(data);
-        // Handle the response data here
+        gantt.parse(data); // Receives the object of hashes
       })
       .catch((error) => {
-        // Handle errors here
         console.error(error);
       });
     
@@ -98,10 +93,6 @@ export default class extends Controller {
         });
         
       });
-    // gantt.parse(ganttData);
-
-    // grid.attachEvent("onEditCell", function(stage, rowId, cellIndex, newValue, oldValue){
-      // gantt.attachEvent("onAfterTaskUpdate", function(id, task){
     
   }
 }
