@@ -131,6 +131,14 @@ _Note 2:_ _There are not tests implemented currently for this Gantt project view
 
 _Note 3:_ _According to [DHTMLX Javascript library](https://dhtmlx.com/), this library uses a non-inclusive time format for displaying the tasks, meaning that if a project goal starts on Saturday 9 and Finishes on Sunday 10 it count it as 1 day goal not a 2 days one. Therefore I increased +1 the projects'goals_.
 
+_Note 4:_ _Turbo-frames helped to edit as well the name of a project in-line, try it and let me know your suggestions_.
+
+![image_2023-09-09_08-22-41](https://github.com/angeluray/ganttview/assets/97189760/4717433d-6097-4566-b52b-673f35772e65)
+
+![image_2023-09-09_08-22-58](https://github.com/angeluray/ganttview/assets/97189760/453a8e06-441d-450a-963d-8293bd2e73e2)
+
+_Note 5:_ _Eevery task's cell is editable as long as they are task_.
+
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
