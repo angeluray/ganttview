@@ -1,3 +1,5 @@
+<!--
+
 Hello, it's Angel, if you ever like to use this Readme file as a template let me suggest son required sections, feel free to remove the ones that are not listed if you want.
 
 REQUIRED SECTIONS:
@@ -43,6 +45,7 @@ OPTIONAL SECTIONS:
 # 📖 Gantt Projetc Viewer <a name="about-project"></a>
 
 # ERD(Entity Relationship Diagram)
+![image](https://github.com/angeluray/ganttview/assets/97189760/874c79ac-2c28-414a-8487-815c89e3f934)
 
 
 ## 🛠 Built With <a name="built-with"></a>
