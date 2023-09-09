@@ -17,7 +17,7 @@ class ProjectsController < ApplicationController
             start_date: task.start_date.strftime('%d-%m-%Y'), # Extracts the date
             duration: task.duration,
             type: task_type_identificator(task),
-            open: task.parent_unique_id == 0 ? true : nil,
+            open: true,
             parent: task.task_type_id == 2 ? task.parent_unique_id : 0
           }.compact
         end,
@@ -83,8 +83,6 @@ class ProjectsController < ApplicationController
       @project = Project.new(project_name: "New project")
 
       project.all_tasks.each do |task|
-
-        puts "#{task.name} |||| task duration #{task.duration}!!  ||| #{task.finish}"
 
         # Task with parent_task_unique_id equal to zero are "projects" otherwise are normal tasks.
         if task.parent_task_unique_id == 0
