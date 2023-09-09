@@ -3,11 +3,12 @@ class ProjectsController < ApplicationController
 
   def index
     @project = Project.new
-    @projects = Project.all
+    @projects = Project.order(created_at: :desc).all
   end
 
   def show
     # Creates object of hashes to be consumed by the stimulus controller "gantt.controller.js"
+    # This object is used by gantt.parse to be able to display the project tasks.
     @project_tasks_data = { 
       "data" =>
       @project.tasks.map do |task|
@@ -18,7 +19,7 @@ class ProjectsController < ApplicationController
             duration: task.duration,
             type: task_type_identificator(task),
             open: true,
-            parent: task.task_type_id == 2 ? task.parent_unique_id : 0
+            parent: parent_setter(task)
           }.compact
         end,
         "links" =>
@@ -31,7 +32,6 @@ class ProjectsController < ApplicationController
           }
         end
       }
-      # This object is used by gantt.parse to be able to display the project tasks.
 
       respond_to do |format|
         format.html # Render the show view
@@ -44,9 +44,17 @@ class ProjectsController < ApplicationController
   end
 
   def create
-     uploaded_file = params[:project][:mpp_file]
 
-    if uploaded_file.present?
+    # Handle the case when :mpp_file parameter is missing or empty
+    if params.key?(:project) && params[:project].key?(:mpp_file)
+      uploaded_file = params[:project][:mpp_file]
+      file_name = uploaded_file.original_filename
+    else
+      redirect_to projects_path, notice: "Por favor carga un archivo."
+    end
+
+    # Checks the file format before loading the logic =
+    if uploaded_file.present? && File.extname(file_name) == '.mpp'
  
        # Defines a temporary file path to store the uploaded file
        temp_file_path = Rails.root.join('tmp', 'uploaded_mpp_file.mpp')
@@ -59,81 +67,65 @@ class ProjectsController < ApplicationController
       # Use MPXJ gem to get the values from the .mpp file
        project = MPXJ::Reader.read(temp_file_path)
 
-      # The comments below were left on purpose for future development enhancements
-      # puts "#{project.all_tasks.size} tasks are present this project"
- 
-      #  puts "The project's tasks are:"
-      #  project.all_tasks.each do |task|
-      #  puts "ID: #{task.unique_id}||||| Name: #{task.name}:  parent_project: #{task.parent_project}, parent_task: #{task.parent_task_unique_id}, start: #{task.start.to_date}, end: #{task.finish.to_date}, actual: #{task.actual_start.to_date}, early: #{task.early_start.to_date}, late: #{task.late_start.to_date}, late-f: #{task.late_finish.to_date}, early-f: #{task.early_finish.to_date}"
-         
-      # puts "this is #{task.predecessors}"
-      # if task.predecessors.present?
-      # task.predecessors.each do |relation|
-      #     puts relation.methods
-      # puts "it's related to #{relation.task_unique_id}}"
-      #  predecessor_id = predecessor.unique_id  # Adjust the key if necessary
-      #  puts "Has >>>#{predecessor.name}<<< as its Predecessor with an ID: #{predecessor.unique_id}"
-      # end
-      #  end
-      #  puts "#{task.name}: starts on #{task.start}, finishes on #{task.finish}, it's duration is #{task.duration}, parent: #{task.parent_project}, assignments: #{task.assignments}, predecessors: #{task.predecessors}, successors: #{task.successors}, childs: #{task.child_tasks}, parent_task: #{task.parent_task}"
-      #  puts "-----------------END OF TASK INFORMATION-----------------"
-      #  end
+      # Initialize a project object to use it as the parent elements of tasks
+      @project = Project.new(project_name: "Nuevo proyecto")
 
-      # Assigns a defaults project name
-      @project = Project.new(project_name: "New project")
+        # Create all the tasks in the mpp file and save them into the database
+        project.all_tasks.each do |task|
 
-      project.all_tasks.each do |task|
-
-        # Task with parent_task_unique_id equal to zero are "projects" otherwise are normal tasks.
-        if task.parent_task_unique_id == 0
-          task_type_id = 1
-        elsif task.parent_task_unique_id != 0 && task.duration > 0
-          task_type_id = 2
-        elsif task.parent_task_unique_id != 0 && task.duration == 0
-          task_type_id = 3
-        end
-
-        # Increase the end-date 1 day to match visually the exact date of project ending.
-        project_end_date = task.finish + 1.day
-
-        duration = (project_end_date.to_date - task.start.to_date).to_i
-
-        # Creates variable to store ids of relations by hierarchy
-        predecessor_task_id = nil
-
-        # Organize the relations within the hierarchy
-        if task.predecessors.present?
-          task.predecessors.each do |relation|
-            predecessor_task_id = relation.task_unique_id
+          if task.parent_task_unique_id == 0
+            task_type_id = 1 # "project"
+          elsif task.parent_task_unique_id != 0 && task.duration > 0
+            task_type_id = 2 # "task"
+          elsif task.parent_task_unique_id != 0 && task.duration == 0
+            task_type_id = 3 # "milestone"
           end
+
+          # Increase the end-date 1 day to match visually the exact date of project ending.
+          project_end_date = task.finish + 1.day
+
+          # Calculates duration base
+          duration = (project_end_date.to_date - task.start.to_date).to_i
+
+          # Creates a variable to store IDs of tasks relationships and set the hierarchy.
+          predecessor_task_id = nil
+
+          # Organize the relations within the hierarchy
+          if task.predecessors.present?
+            task.predecessors.each do |relation|
+              predecessor_task_id = relation.task_unique_id
+            end
+          end
+
+          # Assigns values from the data extracted from the .mpp file
+          @project.tasks.new(
+            task_name: task.name,
+            start_date: task.start,
+            end_date: project_end_date,
+            duration: duration,
+            parent_unique_id: task.parent_task_unique_id,
+            unique_task_id: task.unique_id,
+            task_type_id: task_type_id,
+            relation: predecessor_task_id
+          )
+
+          predecessor_task_id = nil # Reset the value to store new relationship ID
         end
 
-        @project.tasks.new(
-          task_name: task.name,
-          start_date: task.start,
-          end_date: project_end_date,
-          duration: duration,
-          parent_unique_id: task.parent_task_unique_id,
-          unique_task_id: task.unique_id,
-          task_type_id: task_type_id,
-          relation: predecessor_task_id
-        )
-
-        # Reset the value to bring space for the new one
-        predecessor_task_id = nil
+      respond_to do |format|
+        if @project.save
+          File.delete(temp_file_path) # Delete temporal file to avoid memory consuming
+          format.html { redirect_to project_url(@project) }
+          format.json { render :show, status: :created, location: @project }
+        else
+          format.html { render :new, status: :unprocessable_entity }
+          format.json { render json: @project.errors, status: :unprocessable_entity }
+        end
       end
-    end 
-      
-    respond_to do |format|
-      if @project.save
-        File.delete(temp_file_path) # Delete temporal file to avoid memory consuming 
-        format.html { redirect_to project_url(@project), notice: "Project was successfully created." }
-        format.json { render :show, status: :created, location: @project }
-      else
-        format.html { render :new, status: :unprocessable_entity }
-        format.json { render json: @project.errors, status: :unprocessable_entity }
-      end
+    else
+      flash.now[:notice] = "Por favor carga un archivo .mpp valido."
     end
+
   end
 
   def update
@@ -222,6 +214,14 @@ class ProjectsController < ApplicationController
         "task"
       elsif task.task_type_id == 3
         "milestone"
+      end
+    end
+
+    def parent_setter(task)
+      if  task.task_type_id == 2 || task.task_type_id == 3
+        task.parent_unique_id
+      else
+        0
       end
     end
 
