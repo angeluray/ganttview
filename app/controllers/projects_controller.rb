@@ -16,7 +16,7 @@ class ProjectsController < ApplicationController
             text: task.task_name,
             start_date: task.start_date.strftime('%d-%m-%Y'), # Extracts the date
             duration: task.duration,
-            type: task.parent_unique_id == 0 ? "project" : nil,
+            type: task_type_identificator(task),
             open: task.parent_unique_id == 0 ? true : nil,
             parent: task.task_type_id == 2 ? task.parent_unique_id : 0
           }.compact
@@ -84,8 +84,16 @@ class ProjectsController < ApplicationController
 
       project.all_tasks.each do |task|
 
+        puts "#{task.name} |||| task duration #{task.duration}!!  ||| #{task.finish}"
+
         # Task with parent_task_unique_id equal to zero are "projects" otherwise are normal tasks.
-        task_type_id = (task.parent_task_unique_id == 0) ? 1 : 2
+        if task.parent_task_unique_id == 0
+          task_type_id = 1
+        elsif task.parent_task_unique_id != 0 && task.duration > 0
+          task_type_id = 2
+        elsif task.parent_task_unique_id != 0 && task.duration == 0
+          task_type_id = 3
+        end
 
         # Increase the end-date 1 day to match visually the exact date of project ending.
         project_end_date = task.finish + 1.day
@@ -206,6 +214,16 @@ class ProjectsController < ApplicationController
         end
       else
         render json: { error: 'Task not found' }, status: :not_found
+      end
+    end
+
+    def task_type_identificator(task)
+      if task.task_type_id == 1
+        "project"
+      elsif task.task_type_id == 2
+        "task"
+      elsif task.task_type_id == 3
+        "milestone"
       end
     end
 
