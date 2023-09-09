@@ -42,7 +42,9 @@ OPTIONAL SECTIONS:
 
 <!-- PROJECT DESCRIPTION -->
 
-# 📖 Gantt Projetc Viewer <a name="about-project"></a>
+# 📖 Gantt Project Visualizer <a name="about-project"></a>
+You can access the live site by clicking here [Gantt Project Visualizer](https://gantt-mawi.onrender.com).
+
 
 # ERD(Entity Relationship Diagram)
 ![image](https://github.com/angeluray/ganttview/assets/97189760/874c79ac-2c28-414a-8487-815c89e3f934)
