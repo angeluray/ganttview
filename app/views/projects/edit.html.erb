@@ -1,0 +1,9 @@
+<div class="mx-auto md:w-2/3 w-full">
+
+  <%= render "form", project: @project %>
+  
+  <%= turbo_frame_tag dom_id(@project) do %>
+    <%= render "name", project: @project %>
+  <% end %>
+
+</div>

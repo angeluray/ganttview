@@ -1,0 +1,23 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  task_name: MyString
+  task_description: MyString
+  start_date: 2023-09-04 20:59:27
+  end_date: 2023-09-04 20:59:27
+  duration: MyString
+  parent_unique_id: 1
+  unique_task_id: 1
+  project: one
+  task_type: one
+
+two:
+  task_name: MyString
+  task_description: MyString
+  start_date: 2023-09-04 20:59:27
+  end_date: 2023-09-04 20:59:27
+  duration: MyString
+  parent_unique_id: 1
+  unique_task_id: 1
+  project: two
+  task_type: two

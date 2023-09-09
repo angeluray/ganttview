@@ -1,0 +1,21 @@
+<div class="w-full h-full flex flex-col gap-6">
+  <% if notice.present? %>
+    <p class="py-2 px-3 bg-green-50 mb-5 text-green-500 font-medium rounded-lg inline-block" id="notice"><%= notice %></p>
+  <% end %>
+
+  <div class="min-w-full h-full md:h-64 p-9">
+    <div class="flex justify-start md:justify-center items-center">
+      <h1 class="font-bold text-6xl text-slate-600">Gantt project visualizer</h1>
+    </div>
+
+    <div>
+      <p class="font-bold text-xl text-slate-400 text-left md:text-center p-3">Compatible con archivos de Microsoft Project(.mpp), carga tu proyecto y maneja el progreso con tu equipo.</p>
+    </div>
+
+    <%= render "form", project: @project %>
+  </div>
+
+  <div id="projects" class="min-w-full h-96 scroll-container px-12 md:px-14 flex flex-wrap justify-center gap-16">
+    <%= render @projects %>
+  </div>
+</div>
