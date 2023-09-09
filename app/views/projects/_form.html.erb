@@ -12,8 +12,8 @@
   <% end %>
 
   <div class="my-5 mx-auto flex justify-center items-center gap-2.5 cursor-pointer">
-    <%= form.file_field :mpp_file, class: "py-2 px-4 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:border-indigo-500 focus:ring focus:ring-indigo-200 focus:ring-opacity-50" %>
-    <%= form.submit 'Upload', class: "py-2 px-4 bg-green-500 text-white rounded-lg hover:bg-green-600 focus:outline-none focus:bg-indigo-700 focus:ring focus:ring-green-200 focus:ring-opacity-50" %>
+    <%= form.file_field :mpp_file, class: "py-2 px-4 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:border-indigo-500 focus:ring focus:ring-indigo-200 focus:ring-opacity-50", accept: "application/vnd.ms-project" %>
+    <%= form.submit 'Upload', id: "submit-button", class: "py-2 px-4 bg-green-500 text-white rounded-lg hover:bg-green-600 focus:outline-none focus:bg-indigo-700 focus:ring focus:ring-green-200 focus:ring-opacity-50" %>
   </div>
 
 <% end %>
